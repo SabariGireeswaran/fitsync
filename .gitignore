@@ -1,0 +1,15 @@
+#Maven build output
+targe/
+
+#IntelliJ IDEA project files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+#OS generated files
+.DS_Store
+Thumbs.db
+
+#Application data directory
+.fitsync/
