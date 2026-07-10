@@ -1,6 +1,7 @@
 package com.fitsync;
 
 import com.fitsync.config.AppConfig;
+import com.fitsync.dao.DatabaseManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ public class FitSyncApp extends Application {
         //Runs before the UI appears
         //We will initialize the database here in the next step
         System.out.println("FitSync starting...");
+        DatabaseManager.getInstance();
     }
     @Override
     public void start(Stage stage) throws IOException{

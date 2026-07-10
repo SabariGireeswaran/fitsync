@@ -1,0 +1,9 @@
+com/fitsync/dao/UserDao.class
+com/fitsync/config/AppConfig.class
+com/fitsync/model/User.class
+com/fitsync/FitSyncApp.class
+com/fitsync/dao/DatabaseManager.class
+com/fitsync/controller/LoginController.class
+com/fitsync/service/UserService.class
+com/fitsync/MainLauncher.class
+com/fitsync/controller/RegisterController.class
