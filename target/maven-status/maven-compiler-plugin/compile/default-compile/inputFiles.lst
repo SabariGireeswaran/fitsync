@@ -1,9 +1,0 @@
-/home/sabari/fitsync/src/main/java/com/fitsync/FitSyncApp.java
-/home/sabari/fitsync/src/main/java/com/fitsync/MainLauncher.java
-/home/sabari/fitsync/src/main/java/com/fitsync/config/AppConfig.java
-/home/sabari/fitsync/src/main/java/com/fitsync/controller/LoginController.java
-/home/sabari/fitsync/src/main/java/com/fitsync/controller/RegisterController.java
-/home/sabari/fitsync/src/main/java/com/fitsync/dao/DatabaseManager.java
-/home/sabari/fitsync/src/main/java/com/fitsync/dao/UserDao.java
-/home/sabari/fitsync/src/main/java/com/fitsync/model/User.java
-/home/sabari/fitsync/src/main/java/com/fitsync/service/UserService.java

@@ -12,4 +12,4 @@ targe/
 Thumbs.db
 
 #Application data directory
-.fitsync/
+.fitsync/target/
