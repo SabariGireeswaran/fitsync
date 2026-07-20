@@ -30,4 +30,4 @@ mvn javafx:run
 - `config/` — App constants
 
 ## Author
-Sabari Gireeswaran — MCA Student, Loyola College Chennai
+Sabari Gireeswaran — MCA Student, S T Hindu College, Nagercoil 
