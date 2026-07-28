@@ -49,13 +49,13 @@ public class BmiController {
             bmiCategoryLabel.setText(category);
             bmiAdviceLabel.setText(advice);
             resultBox.setVisible(true);
-            errorLable.setText("");
+            errorLabel.setText("");
         } catch (NumberFormatException e) {
             errorLabel.setText("Please enter valid numbers");
         }
-        @FXML
+    }
+    @FXML
         private void handleBack() throws IOException {
             FitSyncApp.showDashboardScreen();
         }
-    }
 }
