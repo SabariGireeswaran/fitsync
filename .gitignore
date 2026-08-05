@@ -13,3 +13,13 @@ Thumbs.db
 
 #Application data directory
 .fitsync/target/
+
+# Compiled class files
+*.class
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# App data
+.fitsync/
