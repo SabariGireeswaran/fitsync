@@ -49,6 +49,30 @@ public class FitSyncApp extends Application {
         primaryStage.setScene((scene));
     }
 
+    public static void showDashboardScreen() throws IOException {
+    FXMLLoader loader = new FXMLLoader(
+            FitSyncApp.class.getResource(AppConfig.FXML_DASHBOARD)
+    );
+    Scene scene = new Scene(loader.load());
+    primaryStage.setScene(scene);
+    }
+
+    public static void showBmiScreen() throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                FitSyncApp.class.getResource(AppConfig.FXML_BMI)
+        );
+        Scene scene = new Scene(loader.load());
+        primaryStage.setScene(scene);
+    }
+
+    public static void showWorkoutScreen() throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                FitSyncApp.class.getResource(AppConfig.FXML_WORKOUT)
+        );
+        Scene scene = new Scene(loader.load());
+        primaryStage.setScene(scene);
+    }
+
     public static Stage getPrimaryStage(){
         return primaryStage;
     }
