@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx" 
+            xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.fitsync.controller.DashboardController"
             style="-fx-background-color: #F8F9FA;">
 
@@ -23,11 +24,13 @@
                 -fx-font-weight: bold; -fx-padding: 0 20 20 20;"/>
             
             <Button fx:id="btnDashboard" text="Dashboard"
+                    onAction="#showDashboard" maxWidth="220"
                     style="-fx-background-color: #4A90D9; -fx-text-fill: white;
                     -fx-font-size: 14px; -fx-padding: 12 20 12 20;
                     -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
             
             <Button fx:id="btnBmi" text="BMI Calculator"
+                    onAction="#showBmi" maxWidth="220"
                     style="-fx-background-color: transparent; -fx-text-fill: #A0AEC0;
                     -fx-font-size: 14px; -fx-padding: 12 20 12 20;
                     -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
@@ -70,6 +73,19 @@
                     <Label fx:id="bmiLabel" text="--"
                             style="-fx-font-size: 32px; -fx-font-weight: bold;
                             -fx-text-fill: #4A90D9;"/>
+                    <Label fx:id="bmiCategoryLabel" text="Not calculated"
+                            style="-fx-font-size: 13px; -fx-text-fill: #718096;"/>
+                        
+                </VBox>
+		 <VBox style="-fx-background-color: white; -fx-background-radius: 10;
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8,0,0,2);
+                        -fx-padding: 24; -fx-min-width: 180px;">
+                    <Label text="WORKOUTS LOGGED"
+                            style="-fx-font-size: 12px; -fx-text-fill: #718096;"/>
+                    <Label fx:id="workoutCountLabel" text="0"
+                            style="-fx-font-size: 32px; -fx-font-weight: bold;
+                            -fx-text-fill: #27AE60;"/>
+                    <Label text="Total sessions"
                             style="-fx-font-size: 13px; -fx-text-fill: #718096;"/>
                 </VBox>
                 <VBox style="-fx-background-color: white; -fx-background-radius: 10;
