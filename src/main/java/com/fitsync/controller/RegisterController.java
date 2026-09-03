@@ -1,21 +1,22 @@
 package com.fitsync.controller;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import com.fitsync.FitSyncApp;
-import com.fitsync.config.AppConfig;
 import com.fitsync.service.UserService;
+import com.fitsync.util.AlertUtil;
+import com.fitsync.util.ValidationUtil;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class RegisterController implements Initializable {
 
@@ -27,6 +28,7 @@ public class RegisterController implements Initializable {
     @FXML private TextField heightField;
     @FXML private TextField weightField;
     @FXML private Label errorLabel;
+    @FXML private Button registerButton;
 
     private final UserService userService = new UserService();
 
@@ -37,48 +39,102 @@ public class RegisterController implements Initializable {
 
     @FXML
     private void handleRegister() {
-        String name     = nameField.getText().trim();
-        String email    = emailField.getText().trim();
-        String password = passwordField.getText().trim();
-        String ageText  = ageField.getText().trim();
-        String gender   = genderCombo.getValue();
-        String heightText = heightField.getText().trim();
-        String weightText = weightField.getText().trim();
+        String name       = text(nameField);
+        String email      = text(emailField);
+        String password   = passwordField.getText() == null ? "" : passwordField.getText();
+        String ageText    = text(ageField);
+        String gender     = genderCombo.getValue();
+        String heightText = text(heightField);
+        String weightText = text(weightField);
 
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty() ||
-                ageText.isEmpty() || gender == null ||
-                heightText.isEmpty() || weightText.isEmpty()) {
-            errorLabel.setText("Please fill in all fields.");
+        String problem = validate(name, email, password, ageText, gender, heightText, weightText);
+        if (problem != null) {
+            errorLabel.setText(problem);
+            AlertUtil.showError("Registration Error", problem);
             return;
         }
 
+        setBusy(true);
         try {
-            int age       = Integer.parseInt(ageText);
-            double height = Double.parseDouble(heightText);
-            double weight = Double.parseDouble(weightText);
-
             boolean success = userService.register(name, email, password,
-                    age, gender, height, weight);
+                    Integer.parseInt(ageText), gender,
+                    Double.parseDouble(heightText), Double.parseDouble(weightText));
 
             if (success) {
-                handleLogin();
+                AlertUtil.showSuccess("Welcome to FitSync",
+                        "Your account has been created. Please sign in to continue.");
+                FitSyncApp.showLoginScreen();
             } else {
                 errorLabel.setText("Email already registered. Please login.");
+                AlertUtil.showError("Registration Error",
+                        "That email is already registered. Please sign in instead.");
             }
-
-        } catch (NumberFormatException e) {
-            errorLabel.setText("Age, height and weight must be numbers.");
         } catch (IOException e) {
-            errorLabel.setText("Navigation error. Please try again.");
+            AlertUtil.showError("Navigation Error",
+                    "Account created, but the login screen could not be opened: " + e.getMessage());
+        } finally {
+            setBusy(false);
         }
     }
 
     @FXML
-    private void handleLogin() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource(AppConfig.FXML_LOGIN)
-        );
-        Scene scene = new Scene(loader.load());
-        FitSyncApp.getPrimaryStage().setScene(scene);
+    private void handleLogin() {
+        try {
+            FitSyncApp.showLoginScreen();
+        } catch (IOException e) {
+            AlertUtil.showError("Navigation Error",
+                    "Could not open the login screen: " + e.getMessage());
+        }
+    }
+
+    private String validate(String name, String email, String password,
+                            String ageText, String gender,
+                            String heightText, String weightText) {
+        if (!ValidationUtil.isNotEmpty(name)
+                || !ValidationUtil.isNotEmpty(email)
+                || !ValidationUtil.isNotEmpty(password)
+                || !ValidationUtil.isNotEmpty(ageText)
+                || gender == null
+                || !ValidationUtil.isNotEmpty(heightText)
+                || !ValidationUtil.isNotEmpty(weightText)) {
+            return "Please fill in every field.";
+        }
+        if (!ValidationUtil.isValidEmail(email)) {
+            return "Please enter a valid email address.";
+        }
+        if (!ValidationUtil.isValidPassword(password)) {
+            return "Password must be at least "
+                    + ValidationUtil.MIN_PASSWORD_LENGTH + " characters long.";
+        }
+        if (!ValidationUtil.isPositiveNumber(ageText) || !isInteger(ageText)) {
+            return "Age must be a whole number greater than zero.";
+        }
+        if (!ValidationUtil.isPositiveNumber(heightText)) {
+            return "Height must be a number greater than zero.";
+        }
+        if (!ValidationUtil.isPositiveNumber(weightText)) {
+            return "Weight must be a number greater than zero.";
+        }
+        return null;
+    }
+
+    private boolean isInteger(String text) {
+        try {
+            Integer.parseInt(text.trim());
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private String text(TextField field) {
+        return field.getText() == null ? "" : field.getText().trim();
+    }
+
+    private void setBusy(boolean busy) {
+        if (registerButton != null) {
+            registerButton.setDisable(busy);
+            registerButton.setText(busy ? "Creating account..." : "Create Account");
+        }
     }
 }

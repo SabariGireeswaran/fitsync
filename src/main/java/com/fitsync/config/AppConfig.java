@@ -5,7 +5,7 @@ public final class AppConfig{
 
     //Application identity
     public static final String APP_NAME     = "FitSync";
-    public static final String APP_VERSION  = "1.0.0";
+    public static final String APP_VERSION  = "5.0.0";
 
     //Window dimension
     public static final double WINDOW_WIDTH   = 1100.0;

@@ -7,17 +7,20 @@ import java.util.ResourceBundle;
 import com.fitsync.FitSyncApp;
 import com.fitsync.model.User;
 import com.fitsync.service.RecommendationService;
+import com.fitsync.util.AlertUtil;
 
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 
 public class RecommendationController implements Initializable {
 
     @FXML private Label loadingLabel;
+    @FXML private ProgressIndicator loadingIndicator;
     @FXML private TextArea recommendationArea;
     @FXML private Button refreshButton;
 
@@ -40,15 +43,13 @@ public class RecommendationController implements Initializable {
     private void loadRecommendation() {
         User currentUser = DashboardController.getCurrentUser();
         if (currentUser == null) {
-            loadingLabel.setVisible(false);
+            setLoading(false);
             recommendationArea.setText("Session expired. Please login again.");
             return;
         }
 
-        loadingLabel.setText("Loading AI recommendation...");
-        loadingLabel.setVisible(true);
+        setLoading(true);
         recommendationArea.clear();
-        refreshButton.setDisable(true);
 
         Task<String> task = new Task<>() {
             @Override
@@ -59,16 +60,16 @@ public class RecommendationController implements Initializable {
 
         task.setOnSucceeded(event -> {
             recommendationArea.setText(task.getValue());
-            loadingLabel.setVisible(false);
-            refreshButton.setDisable(false);
+            setLoading(false);
         });
 
         task.setOnFailed(event -> {
             Throwable ex = task.getException();
             recommendationArea.setText("Failed to load recommendation.\n\n"
                     + (ex != null ? ex.getMessage() : "Unknown error"));
-            loadingLabel.setVisible(false);
-            refreshButton.setDisable(false);
+            setLoading(false);
+            AlertUtil.showError("AI Advisor",
+                    "The recommendation could not be loaded. Please try again.");
         });
 
         Thread thread = new Thread(task, "ai-recommendation");
@@ -76,8 +77,27 @@ public class RecommendationController implements Initializable {
         thread.start();
     }
 
+    private void setLoading(boolean loading) {
+        if (loadingLabel != null) {
+            loadingLabel.setText(loading ? "Loading AI recommendation..." : "");
+            loadingLabel.setVisible(loading);
+            loadingLabel.setManaged(loading);
+        }
+        if (loadingIndicator != null) {
+            loadingIndicator.setVisible(loading);
+            loadingIndicator.setManaged(loading);
+        }
+        if (refreshButton != null) {
+            refreshButton.setDisable(loading);
+        }
+    }
+
     @FXML
-    private void handleBack() throws IOException {
-        FitSyncApp.showDashboardScreen();
+    private void handleBack() {
+        try {
+            FitSyncApp.showDashboardScreen();
+        } catch (IOException e) {
+            AlertUtil.showError("Navigation Error", e.getMessage());
+        }
     }
 }

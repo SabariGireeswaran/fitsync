@@ -1,57 +1,81 @@
 package com.fitsync.controller;
 
-import com.fitsync.FitSyncApp;
-import com.fitsync.config.AppConfig;
-import com.fitsync.model.User;
-import com.fitsync.service.UserService;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-
 import java.io.IOException;
 import java.util.Optional;
 
-import com.fitsync.controller.DashboardController;
+import com.fitsync.FitSyncApp;
+import com.fitsync.model.User;
+import com.fitsync.service.UserService;
+import com.fitsync.util.AlertUtil;
+import com.fitsync.util.ValidationUtil;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 
 public class LoginController {
 
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
+    @FXML private Button loginButton;
 
     private final UserService userService = new UserService();
 
     @FXML
-    private void handleLogin()  throws IOException {
-        String email    = emailField.getText().trim();
-        String password = passwordField.getText().trim();
+    private void handleLogin() {
+        String email    = emailField.getText() == null ? "" : emailField.getText().trim();
+        String password = passwordField.getText() == null ? "" : passwordField.getText().trim();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            errorLabel.setText("Please enter email and password.");
+        if (!ValidationUtil.isNotEmpty(email) || !ValidationUtil.isNotEmpty(password)) {
+            fail("Please enter both your email and password.");
+            return;
+        }
+        if (!ValidationUtil.isValidEmail(email)) {
+            fail("That does not look like a valid email address.");
             return;
         }
 
-        Optional<User> result = userService.login(email, password);
+        setBusy(true);
+        try {
+            Optional<User> result = userService.login(email, password);
 
-        if (result.isPresent()) {
-            errorLabel.setText("");
-            DashboardController.setCurrentUser(result.get());
-            FitSyncApp.showDashboardScreen();
-        
-        } else {
-            errorLabel.setText("Invalid email or password.");
+            if (result.isPresent()) {
+                errorLabel.setText("");
+                DashboardController.setCurrentUser(result.get());
+                FitSyncApp.showDashboardScreen();
+            } else {
+                fail("Invalid email or password.");
+            }
+        } catch (IOException e) {
+            AlertUtil.showError("Navigation Error",
+                    "Could not open the dashboard: " + e.getMessage());
+        } finally {
+            setBusy(false);
         }
     }
 
     @FXML
-    private void handleRegister() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource(AppConfig.FXML_REGISTER)
-        );
-        Scene scene = new Scene(loader.load());
-        FitSyncApp.getPrimaryStage().setScene(scene);
+    private void handleRegister() {
+        try {
+            FitSyncApp.showRegisterScreen();
+        } catch (IOException e) {
+            AlertUtil.showError("Navigation Error",
+                    "Could not open the registration screen: " + e.getMessage());
+        }
+    }
+
+    private void fail(String message) {
+        errorLabel.setText(message);
+        AlertUtil.showError("Login Failed", message);
+    }
+
+    private void setBusy(boolean busy) {
+        if (loginButton != null) {
+            loginButton.setDisable(busy);
+            loginButton.setText(busy ? "Signing in..." : "Login");
+        }
     }
 }

@@ -1,27 +1,21 @@
-#Maven build output
+# Maven build output
+target/
 targe/
 
-#IntelliJ IDEA project files
+# IntelliJ IDEA project files
 .idea/
 *.iml
 *.iws
 *.ipr
 
-#OS generated files
-.DS_Store
-Thumbs.db
-
-#Application data directory
-.fitsync/target/
-
 # Compiled class files
 *.class
 
-# OS files
+# OS generated files
 .DS_Store
 Thumbs.db
 
-# App data
+# Application data (SQLite database lives in ~/.fitsync)
 .fitsync/
 
 # Secrets / API keys

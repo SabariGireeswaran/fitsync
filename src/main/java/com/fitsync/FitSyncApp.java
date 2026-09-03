@@ -4,17 +4,19 @@ import com.fitsync.config.AppConfig;
 import com.fitsync.dao.DatabaseManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class FitSyncApp extends Application {
 
     private static Stage primaryStage;
 
     @Override
-    public void init() throws Exception {
+    public void init() {
         System.out.println("FitSync starting...");
         DatabaseManager.getInstance();
     }
@@ -33,63 +35,34 @@ public class FitSyncApp extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         System.out.println("FitSync shutting down...");
+        DatabaseManager.getInstance().closeConnection();
     }
 
-    public static void showLoginScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                FitSyncApp.class.getResource(AppConfig.FXML_LOGIN));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
-    }
+    public static void showLoginScreen()          throws IOException { swapScene(AppConfig.FXML_LOGIN); }
+    public static void showDashboardScreen()       throws IOException { swapScene(AppConfig.FXML_DASHBOARD); }
+    public static void showBmiScreen()             throws IOException { swapScene(AppConfig.FXML_BMI); }
+    public static void showWorkoutScreen()         throws IOException { swapScene(AppConfig.FXML_WORKOUT); }
+    public static void showWeightScreen()          throws IOException { swapScene(AppConfig.FXML_WEIGHT); }
+    public static void showGoalScreen()            throws IOException { swapScene(AppConfig.FXML_GOAL); }
+    public static void showReportScreen()          throws IOException { swapScene(AppConfig.FXML_REPORT); }
+    public static void showRegisterScreen()        throws IOException { swapScene(AppConfig.FXML_REGISTER); }
+    public static void showRecommendationScreen()  throws IOException { swapScene(AppConfig.FXML_RECOMMENDATION); }
 
-    public static void showDashboardScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                FitSyncApp.class.getResource(AppConfig.FXML_DASHBOARD));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
-    }
+    /**
+     * Loads an FXML file, wraps it in a Scene with the shared stylesheet
+     * attached, and installs it on the primary stage.
+     */
+    private static void swapScene(String fxmlPath) throws IOException {
+        FXMLLoader loader = new FXMLLoader(FitSyncApp.class.getResource(fxmlPath));
+        Parent root = loader.load();
 
-    public static void showBmiScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                FitSyncApp.class.getResource(AppConfig.FXML_BMI));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
-    }
-
-    public static void showWorkoutScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                FitSyncApp.class.getResource(AppConfig.FXML_WORKOUT));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
-    }
-
-    public static void showWeightScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                FitSyncApp.class.getResource(AppConfig.FXML_WEIGHT));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
-    }
-
-    public static void showGoalScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                FitSyncApp.class.getResource(AppConfig.FXML_GOAL));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
-    }
-
-    public static void showReportScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                FitSyncApp.class.getResource(AppConfig.FXML_REPORT));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
-    }
-
-    public static void showRecommendationScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                FitSyncApp.class.getResource(AppConfig.FXML_RECOMMENDATION));
-        Scene scene = new Scene(loader.load());
+        Scene scene = new Scene(root);
+        URL css = FitSyncApp.class.getResource(AppConfig.CSS_MAIN);
+        if (css != null) {
+            scene.getStylesheets().add(css.toExternalForm());
+        }
         primaryStage.setScene(scene);
     }
 

@@ -4,12 +4,15 @@ import com.fitsync.FitSyncApp;
 import com.fitsync.model.User;
 import com.fitsync.model.WorkoutLog;
 import com.fitsync.service.WorkoutService;
+import com.fitsync.util.AlertUtil;
+import com.fitsync.util.ValidationUtil;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -27,6 +30,7 @@ public class WorkoutController implements Initializable {
     @FXML private TextField caloriesField;
     @FXML private Label errorLabel;
     @FXML private Label successLabel;
+    @FXML private Button logButton;
     @FXML private TableView<WorkoutLog> workoutTable;
     @FXML private TableColumn<WorkoutLog, String> exerciseCol;
     @FXML private TableColumn<WorkoutLog, Number> durationCol;
@@ -46,30 +50,39 @@ public class WorkoutController implements Initializable {
         dateCol.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getLoggedAt()));
 
+        workoutTable.setPlaceholder(new Label("No workouts logged yet."));
         loadWorkoutHistory();
     }
 
     @FXML
     private void handleLogWorkout() {
-        String exercise = exerciseField.getText().trim();
-        String durationText = durationField.getText().trim();
-        String caloriesText = caloriesField.getText().trim();
+        String exercise = exerciseField.getText() == null ? "" : exerciseField.getText().trim();
+        String durationText = durationField.getText() == null ? "" : durationField.getText().trim();
+        String caloriesText = caloriesField.getText() == null ? "" : caloriesField.getText().trim();
 
-        if (exercise.isEmpty() || durationText.isEmpty() || caloriesText.isEmpty()) {
-            errorLabel.setText("Please fill in all fields.");
-            successLabel.setText("");
+        if (!ValidationUtil.isNotEmpty(exercise)) {
+            reject("Please enter the type of exercise.");
+            return;
+        }
+        if (!ValidationUtil.isPositiveNumber(durationText)) {
+            reject("Duration must be a number greater than zero.");
+            return;
+        }
+        if (!ValidationUtil.isPositiveNumber(caloriesText)) {
+            reject("Calories burned must be a number greater than zero.");
             return;
         }
 
-        try {
-            int duration = Integer.parseInt(durationText);
-            double calories = Double.parseDouble(caloriesText);
+        User currentUser = DashboardController.getCurrentUser();
+        if (currentUser == null) {
+            AlertUtil.showError("Session Expired", "Please log in again.");
+            return;
+        }
 
-            User currentUser = DashboardController.getCurrentUser();
-            if (currentUser == null) {
-                errorLabel.setText("Session expired. Please login again.");
-                return;
-            }
+        setBusy(true);
+        try {
+            int duration = (int) Math.round(Double.parseDouble(durationText));
+            double calories = Double.parseDouble(caloriesText);
 
             boolean success = workoutService.logWorkout(
                     currentUser.getId(), exercise, duration, calories);
@@ -81,27 +94,42 @@ public class WorkoutController implements Initializable {
                 durationField.clear();
                 caloriesField.clear();
                 loadWorkoutHistory();
+                AlertUtil.showSuccess("Workout Logged",
+                        exercise + " (" + duration + " min) has been added to your history.");
             } else {
-                errorLabel.setText("Failed to log workout. Please try again.");
+                reject("Could not log the workout. Please try again.");
             }
-
-        } catch (NumberFormatException e) {
-            errorLabel.setText("Duration and calories must be numbers.");
+        } finally {
+            setBusy(false);
         }
     }
 
     private void loadWorkoutHistory() {
         User currentUser = DashboardController.getCurrentUser();
         if (currentUser != null) {
-            List<WorkoutLog> logs = workoutService
-                    .getWorkoutHistory(currentUser.getId());
-            workoutTable.setItems(
-                    FXCollections.observableArrayList(logs));
+            List<WorkoutLog> logs = workoutService.getWorkoutHistory(currentUser.getId());
+            workoutTable.setItems(FXCollections.observableArrayList(logs));
         }
     }
 
     @FXML
-    private void handleBack() throws IOException {
-        FitSyncApp.showDashboardScreen();
+    private void handleBack() {
+        try {
+            FitSyncApp.showDashboardScreen();
+        } catch (IOException e) {
+            AlertUtil.showError("Navigation Error", e.getMessage());
+        }
+    }
+
+    private void reject(String message) {
+        errorLabel.setText(message);
+        successLabel.setText("");
+        AlertUtil.showError("Invalid Input", message);
+    }
+
+    private void setBusy(boolean busy) {
+        if (logButton != null) {
+            logButton.setDisable(busy);
+        }
     }
 }

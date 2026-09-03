@@ -1,84 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="16"
+<VBox styleClass="screen" spacing="16"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.fitsync.controller.BmiController"
-      style="-fx-background-color: #F8F9FA;">
+      fx:controller="com.fitsync.controller.BmiController">
 
-    <padding>
-        <Insets top="60" right="300" bottom="60" left="300"/>
-    </padding>
+    <Label text="BMI Calculator" styleClass="page-title"/>
+    <Label text="Calculate and record your Body Mass Index" styleClass="page-subtitle"/>
 
-    <Label text="BMI Calculator"
-           style="-fx-font-size: 28px; -fx-font-weight: bold;
-                  -fx-text-fill: #2D3748;"/>
+    <VBox styleClass="card" maxWidth="520">
+        <HBox spacing="16">
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="WEIGHT (KG)" styleClass="field-label"/>
+                <TextField fx:id="weightField" promptText="e.g. 70" maxWidth="Infinity"/>
+            </VBox>
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="HEIGHT (CM)" styleClass="field-label"/>
+                <TextField fx:id="heightField" promptText="e.g. 175" maxWidth="Infinity"/>
+            </VBox>
+        </HBox>
 
-    <Label text="Calculate your Body Mass Index"
-           style="-fx-font-size: 14px; -fx-text-fill: #718096;"/>
+        <Label fx:id="errorLabel" text="" styleClass="label-error" wrapText="true"/>
 
-    <Label text="" minHeight="10"/>
-
-    <Label text="Weight (kg)" style="-fx-font-weight: bold;"/>
-    <TextField fx:id="weightField"
-               promptText="Enter your weight in kg"
-               maxWidth="400"/>
-
-    <Label text="Height (cm)" style="-fx-font-weight: bold;"/>
-    <TextField fx:id="heightField"
-               promptText="Enter your height in cm"
-               maxWidth="400"/>
-
-    <Button text="Calculate BMI"
-            onAction="#handleCalculate"
-            maxWidth="400"
-            style="-fx-background-color: #4A90D9;
-                   -fx-text-fill: white;
-                   -fx-font-weight: bold;
-                   -fx-padding: 10 20 10 20;
-                   -fx-background-radius: 6;
-                   -fx-cursor: hand;"/>
-
-    <Label text="" minHeight="10"/>
-
-    <VBox fx:id="resultBox" spacing="8" alignment="CENTER"
-          style="-fx-background-color: white;
-                 -fx-background-radius: 10;
-                 -fx-padding: 24;
-                 -fx-effect: dropshadow(gaussian,
-                             rgba(0,0,0,0.08), 8, 0, 0, 2);"
-          maxWidth="400" minWidth="400"
-          visible="false">
-
-        <Label text="Your BMI Result"
-               style="-fx-font-size: 14px; -fx-text-fill: #718096;"/>
-
-        <Label fx:id="bmiValueLabel" text="--"
-               style="-fx-font-size: 48px; -fx-font-weight: bold;
-                      -fx-text-fill: #4A90D9;"/>
-
-        <Label fx:id="bmiCategoryLabel" text=""
-               style="-fx-font-size: 18px; -fx-font-weight: bold;
-                      -fx-text-fill: #2D3748;"/>
-
-        <Label fx:id="bmiAdviceLabel" text=""
-               style="-fx-font-size: 13px; -fx-text-fill: #718096;"
-               wrapText="true"/>
+        <Button fx:id="calculateButton" text="Calculate BMI" onAction="#handleCalculate"
+                styleClass="btn-primary"/>
     </VBox>
 
-    <Label fx:id="errorLabel" text=""
-           style="-fx-text-fill: #E53E3E; -fx-font-size: 13px;"/>
+    <VBox fx:id="resultBox" styleClass="card" maxWidth="520" spacing="6"
+          visible="false" managed="false">
+        <Label text="YOUR BMI RESULT" styleClass="stat-caption"/>
+        <Label fx:id="bmiValueLabel" text="--" style="-fx-font-size:44px; -fx-font-weight:bold; -fx-text-fill:#4A90D9;"/>
+        <Label fx:id="bmiCategoryLabel" text="" styleClass="section-title"/>
+        <Label fx:id="bmiAdviceLabel" text="" styleClass="label-hint" wrapText="true"/>
+    </VBox>
 
-    <Button text="Back to Dashboard"
-            onAction="#handleBack"
-            style="-fx-background-color: transparent;
-                   -fx-text-fill: #4A90D9;
-                   -fx-cursor: hand;"/>
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <Button text="Back to Dashboard" onAction="#handleBack" styleClass="btn-ghost"/>
 
 </VBox>

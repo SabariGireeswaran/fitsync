@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
@@ -9,80 +8,52 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="20"
+<VBox styleClass="screen" spacing="16"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.fitsync.controller.WorkoutController"
-      style="-fx-background-color: #F8F9FA;">
+      fx:controller="com.fitsync.controller.WorkoutController">
 
-    <padding>
-        <Insets top="40" right="40" bottom="40" left="40"/>
-    </padding>
+    <Label text="Workout Log" styleClass="page-title"/>
+    <Label text="Record your training sessions" styleClass="page-subtitle"/>
 
-    <Label text="Workout Logger"
-           style="-fx-font-size: 28px; -fx-font-weight: bold;
-                  -fx-text-fill: #2D3748;"/>
+    <VBox styleClass="card" maxWidth="640">
 
-    <Label text="Log your workout sessions"
-           style="-fx-font-size: 14px; -fx-text-fill: #718096;"/>
+        <VBox spacing="4">
+            <Label text="EXERCISE TYPE" styleClass="field-label"/>
+            <TextField fx:id="exerciseField" promptText="e.g. Running, Cycling, Push-ups" maxWidth="Infinity"/>
+        </VBox>
 
-    <VBox spacing="12"
-          style="-fx-background-color: white; -fx-background-radius: 10;
-                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
-                 -fx-padding: 24;">
-
-        <Label text="Exercise Type" style="-fx-font-weight: bold;"/>
-        <TextField fx:id="exerciseField"
-                   promptText="e.g. Running, Cycling, Push-ups"
-                   maxWidth="500"/>
-
-        <HBox spacing="20">
-            <VBox spacing="6">
-                <Label text="Duration (minutes)" style="-fx-font-weight: bold;"/>
-                <TextField fx:id="durationField"
-                           promptText="e.g. 30"
-                           maxWidth="230"/>
+        <HBox spacing="16">
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="DURATION (MINUTES)" styleClass="field-label"/>
+                <TextField fx:id="durationField" promptText="e.g. 30" maxWidth="Infinity"/>
             </VBox>
-            <VBox spacing="6">
-                <Label text="Calories Burned" style="-fx-font-weight: bold;"/>
-                <TextField fx:id="caloriesField"
-                           promptText="e.g. 250"
-                           maxWidth="230"/>
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="CALORIES BURNED" styleClass="field-label"/>
+                <TextField fx:id="caloriesField" promptText="e.g. 250" maxWidth="Infinity"/>
             </VBox>
         </HBox>
 
-        <Label fx:id="errorLabel" text=""
-               style="-fx-text-fill: #E53E3E; -fx-font-size: 13px;"/>
-        <Label fx:id="successLabel" text=""
-               style="-fx-text-fill: #27AE60; -fx-font-size: 13px;"/>
+        <Label fx:id="errorLabel" text="" styleClass="label-error" wrapText="true"/>
+        <Label fx:id="successLabel" text="" styleClass="label-success" wrapText="true"/>
 
-        <Button text="Log Workout"
-                onAction="#handleLogWorkout"
-                style="-fx-background-color: #4A90D9;
-                       -fx-text-fill: white;
-                       -fx-font-weight: bold;
-                       -fx-padding: 10 24 10 24;
-                       -fx-background-radius: 6;
-                       -fx-cursor: hand;"/>
+        <Button fx:id="logButton" text="Log Workout" onAction="#handleLogWorkout" styleClass="btn-primary"/>
     </VBox>
 
-    <Label text="Workout History"
-           style="-fx-font-size: 18px; -fx-font-weight: bold;
-                  -fx-text-fill: #2D3748;"/>
+    <Label text="Workout History" styleClass="section-title"/>
 
-    <TableView fx:id="workoutTable" maxHeight="300">
+    <TableView fx:id="workoutTable" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="exerciseCol" text="Exercise" minWidth="150"/>
-            <TableColumn fx:id="durationCol" text="Duration (min)" minWidth="130"/>
-            <TableColumn fx:id="caloriesCol" text="Calories" minWidth="100"/>
-            <TableColumn fx:id="dateCol" text="Date" minWidth="160"/>
+            <TableColumn fx:id="exerciseCol" text="Exercise" prefWidth="200"/>
+            <TableColumn fx:id="durationCol" text="Duration (min)" prefWidth="140"/>
+            <TableColumn fx:id="caloriesCol" text="Calories" prefWidth="120"/>
+            <TableColumn fx:id="dateCol" text="Logged At" prefWidth="180"/>
         </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
     </TableView>
 
-    <Button text="Back to Dashboard"
-            onAction="#handleBack"
-            style="-fx-background-color: transparent;
-                   -fx-text-fill: #4A90D9;
-                   -fx-cursor: hand;"/>
+    <Button text="Back to Dashboard" onAction="#handleBack" styleClass="btn-ghost"/>
 
 </VBox>

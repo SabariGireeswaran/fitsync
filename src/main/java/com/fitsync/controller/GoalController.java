@@ -4,11 +4,14 @@ import com.fitsync.FitSyncApp;
 import com.fitsync.model.Goal;
 import com.fitsync.model.User;
 import com.fitsync.service.GoalService;
+import com.fitsync.util.AlertUtil;
+import com.fitsync.util.ValidationUtil;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -26,6 +29,7 @@ public class GoalController implements Initializable {
     @FXML private TextField currentField;
     @FXML private Label errorLabel;
     @FXML private Label successLabel;
+    @FXML private Button addButton;
     @FXML private TableView<Goal> goalTable;
     @FXML private TableColumn<Goal, String> descriptionCol;
     @FXML private TableColumn<Goal, Number> targetCol;
@@ -48,30 +52,39 @@ public class GoalController implements Initializable {
         dateCol.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getCreatedAt()));
 
+        goalTable.setPlaceholder(new Label("No goals set yet."));
         loadGoals();
     }
 
     @FXML
     private void handleAddGoal() {
-        String description = descriptionField.getText().trim();
-        String targetText = targetField.getText().trim();
-        String currentText = currentField.getText().trim();
+        String description = descriptionField.getText() == null ? "" : descriptionField.getText().trim();
+        String targetText = targetField.getText() == null ? "" : targetField.getText().trim();
+        String currentText = currentField.getText() == null ? "" : currentField.getText().trim();
 
-        if (description.isEmpty() || targetText.isEmpty() || currentText.isEmpty()) {
-            errorLabel.setText("Please fill in all fields.");
-            successLabel.setText("");
+        if (!ValidationUtil.isNotEmpty(description)) {
+            reject("Please describe your goal.");
+            return;
+        }
+        if (!ValidationUtil.isPositiveNumber(targetText)) {
+            reject("Target value must be a number greater than zero.");
+            return;
+        }
+        if (!ValidationUtil.isNotEmpty(currentText) || parseOrNegative(currentText) < 0) {
+            reject("Current value must be zero or a positive number.");
             return;
         }
 
+        User currentUser = DashboardController.getCurrentUser();
+        if (currentUser == null) {
+            AlertUtil.showError("Session Expired", "Please log in again.");
+            return;
+        }
+
+        setBusy(true);
         try {
             double target = Double.parseDouble(targetText);
             double current = Double.parseDouble(currentText);
-
-            User currentUser = DashboardController.getCurrentUser();
-            if (currentUser == null) {
-                errorLabel.setText("Session expired. Please login again.");
-                return;
-            }
 
             boolean success = goalService.createGoal(
                     currentUser.getId(), description, target, current);
@@ -83,14 +96,20 @@ public class GoalController implements Initializable {
                 targetField.clear();
                 currentField.clear();
                 loadGoals();
+                AlertUtil.showSuccess("Goal Added", "\"" + description + "\" is now being tracked.");
             } else {
-                errorLabel.setText("Target must be greater than zero and current cannot be negative.");
-                successLabel.setText("");
+                reject("Could not add the goal. Please try again.");
             }
+        } finally {
+            setBusy(false);
+        }
+    }
 
+    private double parseOrNegative(String text) {
+        try {
+            return Double.parseDouble(text.trim());
         } catch (NumberFormatException e) {
-            errorLabel.setText("Target and current values must be numbers.");
-            successLabel.setText("");
+            return -1;
         }
     }
 
@@ -103,7 +122,23 @@ public class GoalController implements Initializable {
     }
 
     @FXML
-    private void handleBack() throws IOException {
-        FitSyncApp.showDashboardScreen();
+    private void handleBack() {
+        try {
+            FitSyncApp.showDashboardScreen();
+        } catch (IOException e) {
+            AlertUtil.showError("Navigation Error", e.getMessage());
+        }
+    }
+
+    private void reject(String message) {
+        errorLabel.setText(message);
+        successLabel.setText("");
+        AlertUtil.showError("Invalid Input", message);
+    }
+
+    private void setBusy(boolean busy) {
+        if (addButton != null) {
+            addButton.setDisable(busy);
+        }
     }
 }

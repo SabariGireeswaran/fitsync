@@ -1,56 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="16"
+<VBox styleClass="screen" spacing="14"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.fitsync.controller.RecommendationController"
-      style="-fx-background-color: #F8F9FA;">
+      fx:controller="com.fitsync.controller.RecommendationController">
 
-    <padding>
-        <Insets top="40" right="40" bottom="40" left="40"/>
-    </padding>
-
-    <Label text="AI Wellness Advisor"
-           style="-fx-font-size: 28px; -fx-font-weight: bold;
-                  -fx-text-fill: #2D3748;"/>
-
+    <Label text="AI Wellness Advisor" styleClass="page-title"/>
     <Label text="Personalised recommendations powered by Claude, based on your stats"
-           style="-fx-font-size: 14px; -fx-text-fill: #718096;"/>
+           styleClass="page-subtitle"/>
 
-    <Label fx:id="loadingLabel" text="Loading AI recommendation..."
-           style="-fx-font-size: 14px; -fx-text-fill: #4A90D9;
-                  -fx-font-weight: bold;"/>
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <ProgressIndicator fx:id="loadingIndicator" prefWidth="20" prefHeight="20"
+                           visible="false" managed="false"/>
+        <Label fx:id="loadingLabel" text="Loading AI recommendation..."
+               style="-fx-text-fill:#4A90D9; -fx-font-weight:bold;"/>
+    </HBox>
 
-    <TextArea fx:id="recommendationArea"
-              editable="false"
-              wrapText="true"
-              VBox.vgrow="ALWAYS"
-              style="-fx-font-size: 13px; -fx-control-inner-background: white;
-                     -fx-background-radius: 8;"/>
+    <TextArea fx:id="recommendationArea" editable="false" wrapText="true"
+              VBox.vgrow="ALWAYS"/>
 
-    <HBox spacing="12">
-        <Button fx:id="refreshButton" text="Refresh"
-                onAction="#handleRefresh"
-                style="-fx-background-color: #4A90D9;
-                       -fx-text-fill: white;
-                       -fx-font-weight: bold;
-                       -fx-padding: 10 24 10 24;
-                       -fx-background-radius: 6;
-                       -fx-cursor: hand;"/>
-
-        <Button text="Back to Dashboard"
-                onAction="#handleBack"
-                style="-fx-background-color: transparent;
-                       -fx-text-fill: #4A90D9;
-                       -fx-cursor: hand;"/>
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Button fx:id="refreshButton" text="Refresh" onAction="#handleRefresh" styleClass="btn-primary"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Back to Dashboard" onAction="#handleBack" styleClass="btn-ghost"/>
     </HBox>
 
 </VBox>
