@@ -96,6 +96,11 @@ public class DashboardController implements Initializable{
     private void showGoals() throws IOException {
         FitSyncApp.showGoalScreen();
     }
+
+    @FXML
+    private void showReport() throws IOException {
+        FitSyncApp.showReportScreen();
+    }
     
     @FXML 
     private void handleLogout() throws IOException {

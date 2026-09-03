@@ -77,4 +77,19 @@ public class WorkoutDao {
         }
         return 0;
     }
+
+    public double averageCaloriesByUserId(int userId) {
+        String sql = "SELECT AVG(calories_burned) FROM workout_logs WHERE user_id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Failed to average calories: " + e.getMessage());
+        }
+        return 0.0;
+    }
 }

@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.fitsync.model.BmiRecord;
@@ -56,5 +58,31 @@ public class BmiDao {
         }
 
         return Optional.empty();
+    }
+
+    public List<BmiRecord> findByUserId(int userId) {
+        String sql = "SELECT * FROM bmi_records " +
+                "WHERE user_id = ? ORDER BY recorded_at DESC, id DESC";
+
+        List<BmiRecord> records = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                records.add(new BmiRecord(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getDouble("bmi_value"),
+                        rs.getString("category"),
+                        rs.getString("recorded_at")
+                ));
+            }
+        } catch (SQLException e) {
+            System.err.println("Failed to fetch BMI records: " + e.getMessage());
+        }
+
+        return records;
     }
 }

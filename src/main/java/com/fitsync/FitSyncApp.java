@@ -79,6 +79,13 @@ public class FitSyncApp extends Application {
         primaryStage.setScene(scene);
     }
 
+    public static void showReportScreen() throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                FitSyncApp.class.getResource(AppConfig.FXML_REPORT));
+        Scene scene = new Scene(loader.load());
+        primaryStage.setScene(scene);
+    }
+
     public static Stage getPrimaryStage() {
         return primaryStage;
     }

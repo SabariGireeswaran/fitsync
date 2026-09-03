@@ -4,6 +4,7 @@ D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\DashboardControl
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\GoalController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\LoginController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\RegisterController.java
+D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\ReportController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\WeightController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\WorkoutController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\dao\BmiDao.java

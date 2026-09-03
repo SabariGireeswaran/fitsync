@@ -44,5 +44,10 @@ public class WorkoutService {
     public int getTotalWorkouts(int userId) {
         return workoutDao.countByUserId(userId);
     }
+
+    public double getAverageCalories(int userId) {
+        double avg = workoutDao.averageCaloriesByUserId(userId);
+        return Math.round(avg * 100.0) / 100.0;
+    }
     
 }

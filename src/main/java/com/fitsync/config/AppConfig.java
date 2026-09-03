@@ -25,6 +25,7 @@ public final class AppConfig{
     public static final String FXML_WORKOUT    = "/com/fitsync/fxml/workout.fxml";
     public static final String FXML_WEIGHT     = "/com/fitsync/fxml/weight.fxml";
     public static final String FXML_GOAL       = "/com/fitsync/fxml/goal.fxml";
+    public static final String FXML_REPORT     = "/com/fitsync/fxml/report.fxml";
 
     //CSS path
     public static final String CSS_MAIN = "/com/fitsync/css/style.css";
