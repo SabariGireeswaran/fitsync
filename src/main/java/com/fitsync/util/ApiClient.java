@@ -2,11 +2,9 @@ package com.fitsync.util;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 import com.fitsync.config.AppConfig;
@@ -39,8 +37,7 @@ public class ApiClient {
 
         try {
             String requestBody = buildRequestBody(prompt);
-            String url = AppConfig.GEMINI_API_URL + "?key="
-                    + URLEncoder.encode(AppConfig.GEMINI_API_KEY, StandardCharsets.UTF_8);
+            String url = AppConfig.GEMINI_API_URL + "?key=" + AppConfig.GEMINI_API_KEY;
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
