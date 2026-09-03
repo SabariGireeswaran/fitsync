@@ -3,6 +3,7 @@ D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\BmiController.ja
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\DashboardController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\GoalController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\LoginController.java
+D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\RecommendationController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\RegisterController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\ReportController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\WeightController.java
@@ -22,6 +23,9 @@ D:\Projects\Github\fitsync\src\main\java\com\fitsync\model\WeightEntry.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\model\WorkoutLog.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\service\BmiService.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\service\GoalService.java
+D:\Projects\Github\fitsync\src\main\java\com\fitsync\service\RecommendationService.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\service\UserService.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\service\WeightService.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\service\WorkoutService.java
+D:\Projects\Github\fitsync\src\main\java\com\fitsync\util\ApiClient.java
+D:\Projects\Github\fitsync\src\main\java\com\fitsync\util\PromptBuilder.java

@@ -59,6 +59,12 @@
                     -fx-font-size: 14px; -fx-padding: 12 20 12 20;
                     -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
 
+            <Button fx:id="btnAdvisor" text="AI Advisor"
+                    onAction="#showRecommendation" maxWidth="220"
+                    style="-fx-background-color: transparent; -fx-text-fill: #A0AEC0;
+                    -fx-font-size: 14px; -fx-padding: 12 20 12 20;
+                    -fx-alignment: CENTER_LEFT; -fx-cursor: hand;"/>
+
             <Button fx:id="btnLogout" text="Logout"
                     onAction="#handleLogout" maxWidth="220"
                     style="-fx-background-color: transparent; -fx-text-fill: #FC8181;

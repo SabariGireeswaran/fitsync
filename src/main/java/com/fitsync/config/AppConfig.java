@@ -26,9 +26,16 @@ public final class AppConfig{
     public static final String FXML_WEIGHT     = "/com/fitsync/fxml/weight.fxml";
     public static final String FXML_GOAL       = "/com/fitsync/fxml/goal.fxml";
     public static final String FXML_REPORT     = "/com/fitsync/fxml/report.fxml";
+    public static final String FXML_RECOMMENDATION = "/com/fitsync/fxml/recommendation.fxml";
 
     //CSS path
     public static final String CSS_MAIN = "/com/fitsync/css/style.css";
+
+    //Anthropic Claude API (AI Wellness Advisor)
+    public static final String API_KEY           = "your-api-key-here";
+    public static final String ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
+    public static final String ANTHROPIC_MODEL   = "claude-sonnet-4-6";
+    public static final String ANTHROPIC_VERSION = "2023-06-01";
 
     //BMI thresholds (WHO standard)
     public static final double BMI_UNDERWEIGHT        = 18.5;
