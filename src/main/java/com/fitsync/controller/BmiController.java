@@ -3,6 +3,7 @@ package com.fitsync.controller;
 import java.io.IOException;
 
 import com.fitsync.FitSyncApp;
+import com.fitsync.model.User;
 import com.fitsync.service.BmiService;
 
 import javafx.fxml.FXML;
@@ -50,6 +51,15 @@ public class BmiController {
             bmiAdviceLabel.setText(advice);
             resultBox.setVisible(true);
             errorLabel.setText("");
+
+            User currentUser = DashboardController.getCurrentUser();
+            if (currentUser != null) {
+                boolean saved = bmiService.saveBmiRecord(
+                        currentUser.getId(), bmi, category);
+                if (saved) {
+                    currentUser.setWeightKg(weight);
+                }
+            }
         } catch (NumberFormatException e) {
             errorLabel.setText("Please enter valid numbers");
         }

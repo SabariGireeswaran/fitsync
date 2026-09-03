@@ -79,9 +79,18 @@ public class DatabaseManager {
                         "calories_burned REAL NOT NULL," +
                         "logged_at TEXT NOT NULL)";
 
+        String createBmiTable =
+                "CREATE TABLE IF NOT EXISTS bmi_records (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "user_id INTEGER NOT NULL," +
+                        "bmi_value REAL NOT NULL," +
+                        "category TEXT NOT NULL," +
+                        "recorded_at TEXT NOT NULL)";
+
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(createUsersTable);
             stmt.execute(createWorkoutTable);
+            stmt.execute(createBmiTable);
             System.out.println("Tables ready.");
         }
     }

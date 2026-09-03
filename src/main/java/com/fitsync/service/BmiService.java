@@ -1,9 +1,18 @@
 package com.fitsync.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
 import com.fitsync.config.AppConfig;
+import com.fitsync.dao.BmiDao;
+import com.fitsync.model.BmiRecord;
 
 public class BmiService {
-    
+
+    private final BmiDao bmiDao = new BmiDao();
+
+
     public double calculateBmi(double weightkg, double heightCm){
         double heightM = heightCm / 100.0;
         double bmi = weightkg / ( heightM * heightM );
@@ -32,7 +41,18 @@ public class BmiService {
             case "Overweight":
                 return "Consider cardio exercises and a balanced diet.";
             default:
-                return "";
+                return "Consult a healthcare professional for a personalised plan.";
         }
+    }
+
+    public boolean saveBmiRecord(int userId, double bmi, String category) {
+        String recordedAt = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        BmiRecord record = new BmiRecord(userId, bmi, category, recordedAt);
+        return bmiDao.save(record);
+    }
+
+    public Optional<BmiRecord> getLatestBmi(int userId) {
+        return bmiDao.findLatestByUserId(userId);
     }
 }

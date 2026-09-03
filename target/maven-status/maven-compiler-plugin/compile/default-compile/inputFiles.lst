@@ -4,6 +4,7 @@ D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\DashboardControl
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\LoginController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\RegisterController.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\controller\WorkoutController.java
+D:\Projects\Github\fitsync\src\main\java\com\fitsync\dao\BmiDao.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\dao\DatabaseManager.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\dao\UserDao.java
 D:\Projects\Github\fitsync\src\main\java\com\fitsync\dao\WorkoutDao.java

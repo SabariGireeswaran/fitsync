@@ -16,6 +16,7 @@ public class WorkoutLog {
                     this.userId                 = userId;
                     this.exerciseType           = exerciseType;
                     this.durationMinutes        = durationMinutes;
+                    this.caloriesBurned         = caloriesBurned;
                     this.loggedAt               = loggedAt;
     }
 

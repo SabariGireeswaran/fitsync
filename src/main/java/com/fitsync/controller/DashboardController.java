@@ -5,7 +5,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.fitsync.FitSyncApp;
+import com.fitsync.model.BmiRecord;
 import com.fitsync.model.User;
+import com.fitsync.service.BmiService;
+import com.fitsync.service.WorkoutService;
+
+import java.util.Optional;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +25,9 @@ public class DashboardController implements Initializable{
 
     private static User currentUser;
 
+    private final BmiService bmiService = new BmiService();
+    private final WorkoutService workoutService = new WorkoutService();
+
     public static void setCurrentUser(User user) {
         currentUser = user;
     }
@@ -30,13 +38,27 @@ public class DashboardController implements Initializable{
 
     @Override 
     public void initialize(URL url, ResourceBundle resourceBundle){
-        if(currentUser != null){
-            welcomeLabel.setText("Welcome back, " + currentUser.getName() + "!");
-            weightLabel.setText(currentUser.getWeightKg() + "kg");
-        }
         bmiLabel.setText("--");
         bmiCategoryLabel.setText("Not calculated yet");
         workoutCountLabel.setText("0");
+        weightLabel.setText("-- kg");
+
+        if (currentUser == null) {
+            return;
+        }
+
+        welcomeLabel.setText("Welcome back, " + currentUser.getName() + "!");
+        weightLabel.setText(currentUser.getWeightKg() + " kg");
+
+        Optional<BmiRecord> latestBmi = bmiService.getLatestBmi(currentUser.getId());
+        if (latestBmi.isPresent()) {
+            BmiRecord record = latestBmi.get();
+            bmiLabel.setText(String.valueOf(record.getBmiValue()));
+            bmiCategoryLabel.setText(record.getCategory());
+        }
+
+        int workoutCount = workoutService.getTotalWorkouts(currentUser.getId());
+        workoutCountLabel.setText(String.valueOf(workoutCount));
     }
 
     @FXML 
