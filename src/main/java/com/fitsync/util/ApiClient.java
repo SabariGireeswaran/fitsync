@@ -6,6 +6,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.List;
+import java.util.function.Consumer;
 
 import com.fitsync.config.AppConfig;
 
@@ -14,8 +16,17 @@ import com.fitsync.config.AppConfig;
  * built on the java.net.http.HttpClient that ships with Java 11+. No
  * external JSON library is used - the request body is assembled by hand
  * and the response text is extracted with simple string parsing.
+ *
+ * <p>When the model is overloaded (HTTP 503) or rate-limited (HTTP 429)
+ * the request is retried a few times, then the call falls back to the
+ * secondary model URL before giving up.
  */
 public class ApiClient {
+
+    /** How many times a single model URL is tried before falling back. */
+    private static final int MAX_ATTEMPTS = 3;
+    /** Pause between attempts on a retryable error. */
+    private static final Duration RETRY_DELAY = Duration.ofSeconds(2);
 
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(30))
@@ -27,6 +38,15 @@ public class ApiClient {
      * throwing, so callers can display it directly.
      */
     public String getRecommendation(String prompt) {
+        return getRecommendation(prompt, msg -> { });
+    }
+
+    /**
+     * Same as {@link #getRecommendation(String)} but reports progress
+     * (e.g. "Gemini is busy, retrying...") to {@code onProgress} so the
+     * caller can surface it in the UI while the call is in flight.
+     */
+    public String getRecommendation(String prompt, Consumer<String> onProgress) {
         if (AppConfig.GEMINI_API_KEY == null
                 || AppConfig.GEMINI_API_KEY.isBlank()
                 || AppConfig.GEMINI_API_KEY.equals("your-gemini-key-here")) {
@@ -35,10 +55,71 @@ public class ApiClient {
                  + "GEMINI_API_KEY environment variable to enable the AI Wellness Advisor.";
         }
 
-        try {
-            String requestBody = buildRequestBody(prompt);
-            String url = AppConfig.GEMINI_API_URL + "?key=" + AppConfig.GEMINI_API_KEY;
+        String requestBody = buildRequestBody(prompt);
+        List<String> modelUrls = List.of(
+                AppConfig.GEMINI_API_URL, AppConfig.GEMINI_API_URL_FALLBACK);
 
+        String lastError = null;
+        boolean sawBusy = false;
+
+        for (int m = 0; m < modelUrls.size(); m++) {
+            boolean isFallback = m > 0;
+            String url = modelUrls.get(m) + "?key=" + AppConfig.GEMINI_API_KEY;
+
+            for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+                Outcome outcome = tryOnce(url, requestBody);
+
+                if (outcome.text != null) {
+                    return outcome.text;
+                }
+                if (!outcome.retryable) {
+                    // 400/403/404 etc. - retrying the same model is pointless,
+                    // but the fallback model may still work.
+                    lastError = outcome.error;
+                    break;
+                }
+
+                sawBusy = true;
+                lastError = outcome.error;
+                if (attempt < MAX_ATTEMPTS) {
+                    onProgress.accept((isFallback ? "Primary model busy - trying backup. " : "")
+                            + "Gemini is busy, retrying... (attempt "
+                            + attempt + " of " + MAX_ATTEMPTS + ")");
+                    if (!sleep(RETRY_DELAY)) {
+                        return "The AI request was interrupted. Please try again.";
+                    }
+                } else if (!isFallback) {
+                    onProgress.accept("Primary model still busy - trying backup model...");
+                }
+            }
+        }
+
+        if (sawBusy) {
+            return "AI service is currently busy. Please click Refresh in a few seconds.";
+        }
+        return "The AI service returned an error.\n\n"
+             + (lastError != null ? lastError : "Please try again.");
+    }
+
+    /** Result of a single HTTP attempt: exactly one of {@code text}/{@code error} is set. */
+    private static final class Outcome {
+        final String text;      // non-null on success
+        final String error;     // non-null on failure
+        final boolean retryable;
+
+        private Outcome(String text, String error, boolean retryable) {
+            this.text = text;
+            this.error = error;
+            this.retryable = retryable;
+        }
+
+        static Outcome ok(String text) { return new Outcome(text, null, false); }
+        static Outcome retry(String error) { return new Outcome(null, error, true); }
+        static Outcome fail(String error) { return new Outcome(null, error, false); }
+    }
+
+    private Outcome tryOnce(String url, String requestBody) {
+        try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(Duration.ofSeconds(60))
@@ -49,26 +130,40 @@ public class ApiClient {
             HttpResponse<String> response = httpClient.send(
                     request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() != 200) {
-                return "The AI service returned an error (HTTP "
-                     + response.statusCode() + ").\n\n"
-                     + extractErrorMessage(response.body());
+            int status = response.statusCode();
+            if (status == 200) {
+                String text = extractText(response.body());
+                return Outcome.ok(text.isBlank()
+                        ? "The AI service returned an empty response. Please try again."
+                        : text);
             }
 
-            String text = extractText(response.body());
-            return text.isBlank()
-                    ? "The AI service returned an empty response. Please try again."
-                    : text;
+            String detail = "The AI service returned an error (HTTP " + status + ").\n\n"
+                    + extractErrorMessage(response.body());
+            // 429 (rate limited), 500, 503 (overloaded) are worth retrying.
+            boolean retryable = status == 429 || status == 500 || status == 503;
+            return retryable ? Outcome.retry(detail) : Outcome.fail(detail);
 
         } catch (IOException e) {
-            return "Could not reach the AI service. Please check your internet "
-                 + "connection and try again.\n\nDetails: " + e.getMessage();
+            return Outcome.retry("Could not reach the AI service. Please check your "
+                    + "internet connection and try again.\n\nDetails: " + e.getMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return "The AI request was interrupted. Please try again.";
+            return Outcome.fail("The AI request was interrupted. Please try again.");
         } catch (RuntimeException e) {
-            return "An unexpected error occurred while fetching the recommendation.\n\n"
-                 + "Details: " + e.getMessage();
+            return Outcome.fail("An unexpected error occurred while fetching the "
+                    + "recommendation.\n\nDetails: " + e.getMessage());
+        }
+    }
+
+    /** Sleeps for {@code d}; returns false if the thread was interrupted. */
+    private boolean sleep(Duration d) {
+        try {
+            Thread.sleep(d.toMillis());
+            return true;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
         }
     }
 

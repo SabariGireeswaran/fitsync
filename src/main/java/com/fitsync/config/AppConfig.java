@@ -37,6 +37,9 @@ public final class AppConfig{
             : "your-gemini-key-here";
     public static final String GEMINI_API_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
+    // Backup model, tried when the primary returns HTTP 503/429.
+    public static final String GEMINI_API_URL_FALLBACK =
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent";
 
     //BMI thresholds (WHO standard)
     public static final double BMI_UNDERWEIGHT        = 18.5;

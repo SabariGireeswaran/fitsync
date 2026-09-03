@@ -1,6 +1,7 @@
 package com.fitsync.service;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.fitsync.model.BmiRecord;
 import com.fitsync.model.User;
@@ -19,6 +20,10 @@ public class RecommendationService {
     private final WorkoutService workoutService = new WorkoutService();
 
     public String getRecommendation(User user) {
+        return getRecommendation(user, msg -> { });
+    }
+
+    public String getRecommendation(User user, Consumer<String> onProgress) {
         if (user == null) {
             return "No user is currently logged in.";
         }
@@ -44,6 +49,6 @@ public class RecommendationService {
         String prompt = promptBuilder.buildWellnessPrompt(
                 user, bmi, category, totalWorkouts, avgCalories);
 
-        return apiClient.getRecommendation(prompt);
+        return apiClient.getRecommendation(prompt, onProgress);
     }
 }

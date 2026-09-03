@@ -9,6 +9,7 @@ import com.fitsync.model.User;
 import com.fitsync.service.RecommendationService;
 import com.fitsync.util.AlertUtil;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -54,7 +55,13 @@ public class RecommendationController implements Initializable {
         Task<String> task = new Task<>() {
             @Override
             protected String call() {
-                return recommendationService.getRecommendation(currentUser);
+                return recommendationService.getRecommendation(
+                        currentUser,
+                        progress -> Platform.runLater(() -> {
+                            if (loadingLabel != null) {
+                                loadingLabel.setText(progress);
+                            }
+                        }));
             }
         };
 
