@@ -32,7 +32,9 @@ public final class AppConfig{
     public static final String CSS_MAIN = "/com/fitsync/css/style.css";
 
     //Anthropic Claude API (AI Wellness Advisor)
-    public static final String API_KEY           = "your-api-key-here";
+    public static final String API_KEY           = System.getenv("ANTHROPIC_API_KEY") != null
+            ? System.getenv("ANTHROPIC_API_KEY")
+            : "your-api-key-here";
     public static final String ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
     public static final String ANTHROPIC_MODEL   = "claude-sonnet-4-6";
     public static final String ANTHROPIC_VERSION = "2023-06-01";

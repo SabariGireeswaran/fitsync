@@ -23,3 +23,8 @@ Thumbs.db
 
 # App data
 .fitsync/
+
+# Secrets / API keys
+.env
+*.env
+api-keys.txt
