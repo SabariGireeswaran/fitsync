@@ -24,6 +24,10 @@ public class DashboardController implements Initializable{
         currentUser = user;
     }
 
+    public static User getCurrentUser() {
+    return currentUser;
+}
+
     @Override 
     public void initialize(URL url, ResourceBundle resourceBundle){
         if(currentUser != null){
@@ -39,15 +43,15 @@ public class DashboardController implements Initializable{
     private void showDashboard() {}
     
     @FXML
-    private void showBmi() {
-        System.out.println("BMI clicked");
+    private void showBmi() throws IOException {
+        FitSyncApp.showBmiScreen();
     }
 
     @FXML
-    private void showWorkout() {
-        System.out.println("Workout clicked");
+    private void showWorkout() throws IOException {
+        FitSyncApp.showWorkoutScreen();
     }
-
+    
     @FXML 
     private void handleLogout() throws IOException {
         currentUser = null;

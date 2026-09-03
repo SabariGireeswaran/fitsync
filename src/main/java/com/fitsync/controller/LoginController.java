@@ -14,6 +14,8 @@ import javafx.scene.control.TextField;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.fitsync.controller.DashboardController;
+
 public class LoginController {
 
     @FXML private TextField emailField;
@@ -23,7 +25,7 @@ public class LoginController {
     private final UserService userService = new UserService();
 
     @FXML
-    private void handleLogin() {
+    private void handleLogin()  throws IOException {
         String email    = emailField.getText().trim();
         String password = passwordField.getText().trim();
 
@@ -36,8 +38,9 @@ public class LoginController {
 
         if (result.isPresent()) {
             errorLabel.setText("");
-            System.out.println("Login successful: " + result.get().getName());
-            // Dashboard navigation will be added in next step
+            DashboardController.setCurrentUser(result.get());
+            FitSyncApp.showDashboardScreen();
+        
         } else {
             errorLabel.setText("Invalid email or password.");
         }

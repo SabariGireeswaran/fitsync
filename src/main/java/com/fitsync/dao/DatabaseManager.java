@@ -43,25 +43,37 @@ public class DatabaseManager {
     }
 
     private void createTables() throws SQLException {
-        String createUsersTable = """
-                CREATE TABLE IF NOT EXISTS users (
-                    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name        TEXT    NOT NULL,
-                    email       TEXT    NOT NULL UNIQUE,
-                    password    TEXT    NOT NULL,
-                    age         INTEGER NOT NULL,
-                    gender      TEXT    NOT NULL,
-                    height_cm   REAL    NOT NULL,
-                    weight_kg   REAL    NOT NULL,
-                    created_at  TEXT    NOT NULL
-                );
-                """;
+    String createUsersTable = """
+            CREATE TABLE IF NOT EXISTS users (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                name        TEXT    NOT NULL,
+                email       TEXT    NOT NULL UNIQUE,
+                password    TEXT    NOT NULL,
+                age         INTEGER NOT NULL,
+                gender      TEXT    NOT NULL,
+                height_cm   REAL    NOT NULL,
+                weight_kg   REAL    NOT NULL,
+                created_at  TEXT    NOT NULL
+            );
+            """;
 
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute(createUsersTable);
-            System.out.println("Tables ready.");
-        }
+    String createWorkoutTable = """
+            CREATE TABLE IF NOT EXISTS workout_logs (
+                id                INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id           INTEGER NOT NULL,
+                exercise_type     TEXT    NOT NULL,
+                duration_minutes  INTEGER NOT NULL,
+                calories_burned   REAL    NOT NULL,
+                logged_at         TEXT    NOT NULL
+            );
+            """;
+
+    try (Statement stmt = connection.createStatement()) {
+        stmt.execute(createUsersTable);
+        stmt.execute(createWorkoutTable);
+        System.out.println("Tables ready.");
     }
+}
 
     public Connection getConnection() {
         return connection;

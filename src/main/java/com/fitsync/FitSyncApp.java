@@ -15,57 +15,42 @@ public class FitSyncApp extends Application {
 
     @Override
     public void init() throws Exception {
+        //Runs before the UI appears
+        //We will initialize the database here in the next step
         System.out.println("FitSync starting...");
         DatabaseManager.getInstance();
     }
-
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException{
         primaryStage = stage;
+
         stage.setTitle(AppConfig.APP_NAME + " " + AppConfig.APP_VERSION);
         stage.setWidth(AppConfig.WINDOW_WIDTH);
         stage.setHeight(AppConfig.WINDOW_HEIGHT);
         stage.setMinWidth(AppConfig.MIN_WIDTH);
         stage.setMinHeight(AppConfig.MIN_HEIGHT);
         stage.setResizable(true);
+
         showLoginScreen();
+
         stage.show();
+
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() throws Exception{
         System.out.println("FitSync shutting down...");
     }
 
-    public static void showLoginScreen() throws IOException {
+    public static void showLoginScreen() throws IOException{
         FXMLLoader loader = new FXMLLoader(
                 FitSyncApp.class.getResource(AppConfig.FXML_LOGIN));
         Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
+        primaryStage.setScene((scene));
     }
 
-    public static void showDashboardScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                FitSyncApp.class.getResource(AppConfig.FXML_DASHBOARD));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
-    }
-
-    public static void showBmiScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                FitSyncApp.class.getResource(AppConfig.FXML_BMI));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
-    }
-
-    public static void showWorkoutScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                FitSyncApp.class.getResource(AppConfig.FXML_WORKOUT));
-        Scene scene = new Scene(loader.load());
-        primaryStage.setScene(scene);
-    }
-
-    public static Stage getPrimaryStage() {
+    public static Stage getPrimaryStage(){
         return primaryStage;
     }
+
 }
