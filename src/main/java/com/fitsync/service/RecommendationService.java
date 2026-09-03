@@ -9,7 +9,7 @@ import com.fitsync.util.PromptBuilder;
 
 /**
  * Gathers the current user's wellness stats from the database, builds a
- * prompt, and asks Claude for a personalised recommendation.
+ * prompt, and asks the AI model for a personalised recommendation.
  */
 public class RecommendationService {
 

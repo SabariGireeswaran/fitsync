@@ -3,7 +3,7 @@ package com.fitsync.util;
 import com.fitsync.model.User;
 
 /**
- * Assembles the natural-language prompt sent to Claude for the
+ * Assembles the natural-language prompt sent to the AI model for the
  * AI Wellness Advisor, based on the current user's stats.
  */
 public class PromptBuilder {

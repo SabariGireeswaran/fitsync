@@ -4,7 +4,7 @@
 
 FitSync is a JavaFX desktop application that helps a single user track the core
 signals of personal fitness — body weight, BMI, workouts and goals — and turns
-those numbers into a personalised plan using Anthropic's Claude API. It is built
+those numbers into a personalised plan using Google's Gemini API. It is built
 as a clean, layered MVC application over a local SQLite database, and ships as a
 single Maven project that runs with one command.
 
@@ -49,7 +49,7 @@ current build.
   - weight change over time (first vs. latest entry, direction and range)
 
 ### Version 4 — AI recommendation module
-- **AI Wellness Advisor** screen powered by the Anthropic Claude Messages API
+- **AI Wellness Advisor** screen powered by the Google Gemini REST API
 - `ApiClient` built on `java.net.http.HttpClient` (no SDK dependency)
 - `PromptBuilder` assembles a detailed prompt from the user's stats
 - Request runs on a background `javafx.concurrent.Task` so the UI never freezes
@@ -77,7 +77,7 @@ current build.
 | SQLite (via `sqlite-jdbc`) | 3.45.1.0 | Local persistence |
 | Maven | 3.9+ | Build & run (`javafx-maven-plugin` 0.0.8) |
 | JUnit Jupiter | 5.10.1 | Test scaffold |
-| Anthropic Claude API | `2023-06-01` / `claude-sonnet-4-6` | AI recommendations |
+| Google Gemini API | `v1beta` / `gemini-pro` | AI recommendations |
 
 ---
 
@@ -163,33 +163,34 @@ mvn javafx:run
 
 ---
 
-## Configuring the Claude API key
+## Configuring the Gemini API key
 
-The AI Wellness Advisor needs an Anthropic API key. FitSync reads it from an
-**environment variable** — it is never stored in source.
+The AI Wellness Advisor calls the Google Gemini `generateContent` REST API.
+FitSync reads the key from an **environment variable** — it is never stored in
+source.
 
-`AppConfig.API_KEY`:
+`AppConfig.GEMINI_API_KEY`:
 ```java
-public static final String API_KEY = System.getenv("ANTHROPIC_API_KEY") != null
-        ? System.getenv("ANTHROPIC_API_KEY")
-        : "your-api-key-here";
+public static final String GEMINI_API_KEY = System.getenv("GEMINI_API_KEY") != null
+        ? System.getenv("GEMINI_API_KEY")
+        : "your-gemini-key-here";
 ```
 
 ### Windows (persist for your user)
 ```powershell
-[Environment]::SetEnvironmentVariable("ANTHROPIC_API_KEY", "sk-ant-YOUR-KEY", "User")
+[Environment]::SetEnvironmentVariable("GEMINI_API_KEY", "YOUR-GEMINI-KEY", "User")
 ```
 Then open a **new** terminal / restart your IDE.
 
 ### Ubuntu (persist in your shell profile)
 ```bash
-echo 'export ANTHROPIC_API_KEY="sk-ant-YOUR-KEY"' >> ~/.bashrc
+echo 'export GEMINI_API_KEY="YOUR-GEMINI-KEY"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
 Without a key the app runs normally; the Advisor screen simply shows a message
 explaining that the key is not configured. Get a key at
-<https://console.anthropic.com>.
+<https://aistudio.google.com/app/apikey>.
 
 ---
 

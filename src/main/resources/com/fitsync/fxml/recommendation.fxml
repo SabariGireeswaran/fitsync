@@ -14,7 +14,7 @@
       fx:controller="com.fitsync.controller.RecommendationController">
 
     <Label text="AI Wellness Advisor" styleClass="page-title"/>
-    <Label text="Personalised recommendations powered by Claude, based on your stats"
+    <Label text="Personalised recommendations powered by Google Gemini, based on your stats"
            styleClass="page-subtitle"/>
 
     <HBox alignment="CENTER_LEFT" spacing="10">
