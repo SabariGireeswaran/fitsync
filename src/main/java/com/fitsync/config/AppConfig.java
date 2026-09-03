@@ -36,7 +36,7 @@ public final class AppConfig{
             ? System.getenv("GEMINI_API_KEY")
             : "your-gemini-key-here";
     public static final String GEMINI_API_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
     //BMI thresholds (WHO standard)
     public static final double BMI_UNDERWEIGHT        = 18.5;

@@ -77,7 +77,7 @@ current build.
 | SQLite (via `sqlite-jdbc`) | 3.45.1.0 | Local persistence |
 | Maven | 3.9+ | Build & run (`javafx-maven-plugin` 0.0.8) |
 | JUnit Jupiter | 5.10.1 | Test scaffold |
-| Google Gemini API | `v1beta` / `gemini-pro` | AI recommendations |
+| Google Gemini API | `v1beta` / `gemini-1.5-flash` | AI recommendations |
 
 ---
 
