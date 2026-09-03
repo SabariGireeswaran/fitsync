@@ -87,10 +87,28 @@ public class DatabaseManager {
                         "category TEXT NOT NULL," +
                         "recorded_at TEXT NOT NULL)";
 
+        String createWeightTable =
+                "CREATE TABLE IF NOT EXISTS weight_entries (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "user_id INTEGER NOT NULL," +
+                        "weight_kg REAL NOT NULL," +
+                        "recorded_at TEXT NOT NULL)";
+
+        String createGoalsTable =
+                "CREATE TABLE IF NOT EXISTS goals (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "user_id INTEGER NOT NULL," +
+                        "goal_description TEXT NOT NULL," +
+                        "target_value REAL NOT NULL," +
+                        "current_value REAL NOT NULL," +
+                        "created_at TEXT NOT NULL)";
+
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(createUsersTable);
             stmt.execute(createWorkoutTable);
             stmt.execute(createBmiTable);
+            stmt.execute(createWeightTable);
+            stmt.execute(createGoalsTable);
             System.out.println("Tables ready.");
         }
     }

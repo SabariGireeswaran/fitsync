@@ -8,6 +8,7 @@ import com.fitsync.FitSyncApp;
 import com.fitsync.model.BmiRecord;
 import com.fitsync.model.User;
 import com.fitsync.service.BmiService;
+import com.fitsync.service.WeightService;
 import com.fitsync.service.WorkoutService;
 
 import java.util.Optional;
@@ -27,6 +28,7 @@ public class DashboardController implements Initializable{
 
     private final BmiService bmiService = new BmiService();
     private final WorkoutService workoutService = new WorkoutService();
+    private final WeightService weightService = new WeightService();
 
     public static void setCurrentUser(User user) {
         currentUser = user;
@@ -48,13 +50,24 @@ public class DashboardController implements Initializable{
         }
 
         welcomeLabel.setText("Welcome back, " + currentUser.getName() + "!");
-        weightLabel.setText(currentUser.getWeightKg() + " kg");
 
+        // Live current weight: latest logged entry, falling back to profile weight
+        double latestWeight = weightService.getLatestWeight(currentUser.getId());
+        if (latestWeight <= 0) {
+            latestWeight = currentUser.getWeightKg();
+        }
+        weightLabel.setText(latestWeight + " kg");
+
+        // Live BMI: latest stored BMI record, otherwise computed from latest weight
         Optional<BmiRecord> latestBmi = bmiService.getLatestBmi(currentUser.getId());
         if (latestBmi.isPresent()) {
             BmiRecord record = latestBmi.get();
             bmiLabel.setText(String.valueOf(record.getBmiValue()));
             bmiCategoryLabel.setText(record.getCategory());
+        } else if (latestWeight > 0 && currentUser.getHeightCm() > 0) {
+            double bmi = bmiService.calculateBmi(latestWeight, currentUser.getHeightCm());
+            bmiLabel.setText(String.valueOf(bmi));
+            bmiCategoryLabel.setText(bmiService.classifyBmi(bmi));
         }
 
         int workoutCount = workoutService.getTotalWorkouts(currentUser.getId());
@@ -72,6 +85,16 @@ public class DashboardController implements Initializable{
     @FXML
     private void showWorkout() throws IOException {
         FitSyncApp.showWorkoutScreen();
+    }
+
+    @FXML
+    private void showWeight() throws IOException {
+        FitSyncApp.showWeightScreen();
+    }
+
+    @FXML
+    private void showGoals() throws IOException {
+        FitSyncApp.showGoalScreen();
     }
     
     @FXML 

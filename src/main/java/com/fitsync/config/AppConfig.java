@@ -23,6 +23,8 @@ public final class AppConfig{
     public static final String FXML_DASHBOARD  = "/com/fitsync/fxml/dashboard.fxml";
     public static final String FXML_BMI        = "/com/fitsync/fxml/bmi.fxml";
     public static final String FXML_WORKOUT    = "/com/fitsync/fxml/workout.fxml";
+    public static final String FXML_WEIGHT     = "/com/fitsync/fxml/weight.fxml";
+    public static final String FXML_GOAL       = "/com/fitsync/fxml/goal.fxml";
 
     //CSS path
     public static final String CSS_MAIN = "/com/fitsync/css/style.css";

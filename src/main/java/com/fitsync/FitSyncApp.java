@@ -65,6 +65,20 @@ public class FitSyncApp extends Application {
         primaryStage.setScene(scene);
     }
 
+    public static void showWeightScreen() throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                FitSyncApp.class.getResource(AppConfig.FXML_WEIGHT));
+        Scene scene = new Scene(loader.load());
+        primaryStage.setScene(scene);
+    }
+
+    public static void showGoalScreen() throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                FitSyncApp.class.getResource(AppConfig.FXML_GOAL));
+        Scene scene = new Scene(loader.load());
+        primaryStage.setScene(scene);
+    }
+
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
