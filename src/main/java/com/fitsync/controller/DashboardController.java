@@ -48,6 +48,7 @@ public class DashboardController implements Initializable{
     }
 
     @FXML
+    @FXML
     private void showWorkout() throws IOException {
         FitSyncApp.showWorkoutScreen();
     }
