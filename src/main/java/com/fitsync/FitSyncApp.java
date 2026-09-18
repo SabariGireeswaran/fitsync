@@ -15,6 +15,14 @@ public class FitSyncApp extends Application {
 
     private static Stage primaryStage;
 
+    /**
+     * The single Scene reused for every screen. Screens are switched by
+     * swapping this Scene's root node (see {@link #swapScene}) rather than
+     * replacing the Scene itself, so a maximized window stays maximized
+     * instead of flashing back to its unmaximized size on every navigation.
+     */
+    private static Scene primaryScene;
+
     @Override
     public void init() {
         System.out.println("FitSync starting...");
@@ -30,7 +38,10 @@ public class FitSyncApp extends Application {
         stage.setMinWidth(AppConfig.MIN_WIDTH);
         stage.setMinHeight(AppConfig.MIN_HEIGHT);
         stage.setResizable(true);
-        showLoginScreen();
+
+        primaryScene = new Scene(loadFxml(AppConfig.FXML_LOGIN));
+        applyStylesheet(primaryScene);
+        stage.setScene(primaryScene);
         stage.show();
     }
 
@@ -51,19 +62,34 @@ public class FitSyncApp extends Application {
     public static void showRecommendationScreen()  throws IOException { swapScene(AppConfig.FXML_RECOMMENDATION); }
 
     /**
-     * Loads an FXML file, wraps it in a Scene with the shared stylesheet
-     * attached, and installs it on the primary stage.
+     * Loads an FXML file and swaps it in as the root of the shared
+     * {@link #primaryScene}. Reusing the same Scene (instead of building a
+     * new one per screen) avoids a JavaFX/Windows quirk where assigning a
+     * fresh Scene to a maximized Stage briefly collapses the window to its
+     * unmaximized size - visible as a "minimize then blank" flash - before
+     * re-maximizing.
      */
     private static void swapScene(String fxmlPath) throws IOException {
-        FXMLLoader loader = new FXMLLoader(FitSyncApp.class.getResource(fxmlPath));
-        Parent root = loader.load();
+        Parent root = loadFxml(fxmlPath);
+        if (primaryScene == null) {
+            primaryScene = new Scene(root);
+            applyStylesheet(primaryScene);
+            primaryStage.setScene(primaryScene);
+        } else {
+            primaryScene.setRoot(root);
+        }
+    }
 
-        Scene scene = new Scene(root);
+    private static Parent loadFxml(String fxmlPath) throws IOException {
+        FXMLLoader loader = new FXMLLoader(FitSyncApp.class.getResource(fxmlPath));
+        return loader.load();
+    }
+
+    private static void applyStylesheet(Scene scene) {
         URL css = FitSyncApp.class.getResource(AppConfig.CSS_MAIN);
         if (css != null) {
             scene.getStylesheets().add(css.toExternalForm());
         }
-        primaryStage.setScene(scene);
     }
 
     public static Stage getPrimaryStage() {

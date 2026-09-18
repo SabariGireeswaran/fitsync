@@ -163,34 +163,51 @@ mvn javafx:run
 
 ---
 
-## Configuring the Gemini API key
+## Configuring the AI Wellness Advisor's API keys
 
-The AI Wellness Advisor calls the Google Gemini `generateContent` REST API.
-FitSync reads the key from an **environment variable** — it is never stored in
+The AI Wellness Advisor calls the Google Gemini `generateContent` REST API as
+its primary provider. If Gemini is not configured, or fails outright even
+after its own retries and model fallback (e.g. an outage), FitSync
+automatically falls back to **Groq** (a different provider, using an
+OpenAI-compatible chat API) so one provider's downtime doesn't take out the
+Advisor entirely.
+
+Both keys are read from **environment variables** — neither is stored in
 source.
 
-`AppConfig.GEMINI_API_KEY`:
+`AppConfig.GEMINI_API_KEY` / `AppConfig.GROQ_API_KEY`:
 ```java
 public static final String GEMINI_API_KEY = System.getenv("GEMINI_API_KEY") != null
-        ? System.getenv("GEMINI_API_KEY")
+        ? System.getenv("GEMINI_API_KEY").trim()
         : "your-gemini-key-here";
+
+public static final String GROQ_API_KEY = System.getenv("GROQ_API_KEY") != null
+        ? System.getenv("GROQ_API_KEY").trim()
+        : "your-groq-key-here";
 ```
 
 ### Windows (persist for your user)
 ```powershell
 [Environment]::SetEnvironmentVariable("GEMINI_API_KEY", "YOUR-GEMINI-KEY", "User")
+[Environment]::SetEnvironmentVariable("GROQ_API_KEY", "YOUR-GROQ-KEY", "User")
 ```
 Then open a **new** terminal / restart your IDE.
 
 ### Ubuntu (persist in your shell profile)
 ```bash
 echo 'export GEMINI_API_KEY="YOUR-GEMINI-KEY"' >> ~/.bashrc
+echo 'export GROQ_API_KEY="YOUR-GROQ-KEY"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-Without a key the app runs normally; the Advisor screen simply shows a message
-explaining that the key is not configured. Get a key at
-<https://aistudio.google.com/app/apikey>.
+Both keys are optional and independent:
+- Neither set: the Advisor screen shows a message explaining that no key is configured.
+- Only `GEMINI_API_KEY` set: behaves as before (primary model + Gemini fallback model).
+- Only `GROQ_API_KEY` set: Groq is used directly.
+- Both set: Gemini is tried first; Groq is used only if Gemini is unavailable.
+
+Get a Gemini key at <https://aistudio.google.com/app/apikey> and a free Groq
+key at <https://console.groq.com/keys>.
 
 ---
 
