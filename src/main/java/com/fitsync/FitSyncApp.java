@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -38,6 +39,11 @@ public class FitSyncApp extends Application {
         stage.setMinWidth(AppConfig.MIN_WIDTH);
         stage.setMinHeight(AppConfig.MIN_HEIGHT);
         stage.setResizable(true);
+
+        URL iconUrl = FitSyncApp.class.getResource(AppConfig.APP_ICON);
+        if (iconUrl != null) {
+            stage.getIcons().add(new Image(iconUrl.toExternalForm()));
+        }
 
         primaryScene = new Scene(loadFxml(AppConfig.FXML_LOGIN));
         applyStylesheet(primaryScene);

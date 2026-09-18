@@ -200,17 +200,17 @@ mvn clean package -DskipTests
 # Windows (needs the WiX Toolset: https://wixtoolset.org)
 jpackage --type msi --input target --main-jar target/fitsync-<version>.jar ^
   --main-class com.fitsync.MainLauncher --name FitSync --app-version <version> ^
-  --win-menu --win-shortcut --dest dist
+  --win-menu --win-shortcut --icon target/classes/icons/fitsync.ico --dest dist
 
 # macOS
 jpackage --type dmg --input target --main-jar target/fitsync-<version>.jar \
   --main-class com.fitsync.MainLauncher --name FitSync --app-version <version> \
-  --dest dist
+  --icon target/classes/icons/fitsync.icns --dest dist
 
 # Linux (Debian/Ubuntu)
 jpackage --type deb --input target --main-jar target/fitsync-<version>.jar \
   --main-class com.fitsync.MainLauncher --name FitSync --app-version <version> \
-  --dest dist
+  --icon target/classes/icons/fitsync.png --dest dist
 ```
 
 The finished installer(s) land in `dist/`.

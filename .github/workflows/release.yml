@@ -78,6 +78,7 @@ jobs:
             --win-shortcut `
             --win-dir-chooser `
             --win-upgrade-uuid 1a44fd72-950c-4462-979e-5f0e5be9aaa4 `
+            --icon target/classes/icons/fitsync.ico `
             --dest dist
 
       - name: Package installer (macOS DMG)
@@ -93,6 +94,7 @@ jobs:
             --vendor "FitSync" \
             --description "Intelligent Personal Wellness and Exercise Recommendation System" \
             --mac-package-identifier com.fitsync.app \
+            --icon target/classes/icons/fitsync.icns \
             --dest dist
 
       - name: Package installer (Linux DEB)
@@ -109,6 +111,7 @@ jobs:
             --description "Intelligent Personal Wellness and Exercise Recommendation System" \
             --linux-shortcut \
             --linux-menu-group "Health;Education;" \
+            --icon target/classes/icons/fitsync.png \
             --dest dist
 
       - name: Upload build artifact

@@ -31,6 +31,9 @@ public final class AppConfig{
     //CSS path
     public static final String CSS_MAIN = "/com/fitsync/css/style.css";
 
+    //App icon (window/taskbar icon; also used as the jpackage installer icon)
+    public static final String APP_ICON = "/icons/fitsync.png";
+
     //Google Gemini API (AI Wellness Advisor)
     public static final String GEMINI_API_KEY = System.getenv("GEMINI_API_KEY") != null
             ? System.getenv("GEMINI_API_KEY").trim()
