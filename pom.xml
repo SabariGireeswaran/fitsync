@@ -80,6 +80,48 @@
                     <version>3.2.3</version>
                 </plugin>
 
+                <!-- Copies every runtime dependency (JavaFX, sqlite-jdbc, ...) next
+                     to the built jar under target/libs, so the jar can be run
+                     standalone with `java -jar` and so jpackage (see
+                     .github/workflows/release.yml) has a complete, flat app
+                     image to bundle - no fat/shaded jar needed. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.6.1</version>
+                    <executions>
+                        <execution>
+                            <id>copy-dependencies</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                                <includeScope>runtime</includeScope>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Makes target/fitsync-*.jar directly runnable (`java -jar ...`)
+                     by writing a Main-Class and a Class-Path manifest entry that
+                     points at target/libs/*.jar. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.4.1</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <mainClass>com.fitsync.MainLauncher</mainClass>
+                                <addClasspath>true</addClasspath>
+                                <classpathPrefix>libs/</classpathPrefix>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+
             </plugins>
         </build>
     </project>

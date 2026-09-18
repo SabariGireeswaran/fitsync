@@ -1,0 +1,134 @@
+name: Release
+
+# Builds a native, self-contained installer for Windows, macOS and Linux -
+# no Java installation required on the end user's machine - and publishes
+# them to a GitHub Release.
+#
+# Triggers:
+#   - Push a tag like "v5.0.0" to build and publish a release automatically.
+#   - Or run manually from the Actions tab (workflow_dispatch) with a version.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "App version to build (e.g. 5.0.0)"
+        required: true
+        default: "5.0.0"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            type: msi
+            artifact: FitSync-*.msi
+          - os: macos-latest
+            type: dmg
+            artifact: FitSync-*.dmg
+          - os: ubuntu-latest
+            type: deb
+            artifact: fitsync*.deb
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (includes jpackage)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "value=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            # Strip the leading "v" from a tag like v5.0.0
+            echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build jar + dependencies
+        run: mvn -B clean package -DskipTests
+
+      - name: Package installer (Windows MSI)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          jpackage `
+            --type msi `
+            --input target `
+            --main-jar fitsync-1.0.0-SNAPSHOT.jar `
+            --main-class com.fitsync.MainLauncher `
+            --name FitSync `
+            --app-version ${{ steps.version.outputs.value }} `
+            --vendor "FitSync" `
+            --description "Intelligent Personal Wellness and Exercise Recommendation System" `
+            --win-menu `
+            --win-shortcut `
+            --win-dir-chooser `
+            --win-upgrade-uuid 1a44fd72-950c-4462-979e-5f0e5be9aaa4 `
+            --dest dist
+
+      - name: Package installer (macOS DMG)
+        if: matrix.os == 'macos-latest'
+        run: |
+          jpackage \
+            --type dmg \
+            --input target \
+            --main-jar fitsync-1.0.0-SNAPSHOT.jar \
+            --main-class com.fitsync.MainLauncher \
+            --name FitSync \
+            --app-version ${{ steps.version.outputs.value }} \
+            --vendor "FitSync" \
+            --description "Intelligent Personal Wellness and Exercise Recommendation System" \
+            --mac-package-identifier com.fitsync.app \
+            --dest dist
+
+      - name: Package installer (Linux DEB)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          jpackage \
+            --type deb \
+            --input target \
+            --main-jar fitsync-1.0.0-SNAPSHOT.jar \
+            --main-class com.fitsync.MainLauncher \
+            --name FitSync \
+            --app-version ${{ steps.version.outputs.value }} \
+            --vendor "FitSync" \
+            --description "Intelligent Personal Wellness and Exercise Recommendation System" \
+            --linux-shortcut \
+            --linux-menu-group "Health;Education;" \
+            --dest dist
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fitsync-${{ matrix.os }}
+          path: dist/${{ matrix.artifact }}
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all installers
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*/*
+          generate_release_notes: true
