@@ -48,7 +48,7 @@ public final class AppConfig{
             : "your-groq-key-here";
     public static final String GROQ_API_URL =
             "https://api.groq.com/openai/v1/chat/completions";
-    public static final String GROQ_MODEL = "llama-3.3-70b-versatile";
+    public static final String GROQ_MODEL = "openai/gpt-oss-120b";
 
     //BMI thresholds (WHO standard)
     public static final double BMI_UNDERWEIGHT        = 18.5;
