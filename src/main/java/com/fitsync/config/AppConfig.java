@@ -41,6 +41,15 @@ public final class AppConfig{
     public static final String GEMINI_API_URL_FALLBACK =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent";
 
+    //Groq API (backup AI provider - used only if Gemini is not configured or
+    //fails outright after exhausting its own retries/fallback model)
+    public static final String GROQ_API_KEY = System.getenv("GROQ_API_KEY") != null
+            ? System.getenv("GROQ_API_KEY").trim()
+            : "your-groq-key-here";
+    public static final String GROQ_API_URL =
+            "https://api.groq.com/openai/v1/chat/completions";
+    public static final String GROQ_MODEL = "llama-3.3-70b-versatile";
+
     //BMI thresholds (WHO standard)
     public static final double BMI_UNDERWEIGHT        = 18.5;
     public static final double BMI_NORMAL_MAX         = 24.9;
