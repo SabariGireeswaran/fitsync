@@ -10,6 +10,27 @@ single Maven project that runs with one command.
 
 ---
 
+## Download
+
+No Java installation needed — grab the installer for your OS from the
+[**Releases**](../../releases) page:
+
+| Platform | File |
+|----------|------|
+| Windows  | `FitSync-<version>.msi` — double-click to install, then launch from the Start Menu. |
+| macOS    | `FitSync-<version>.dmg` — open it and drag FitSync into Applications. |
+| Linux (Debian/Ubuntu) | `fitsync_<version>_amd64.deb` — `sudo dpkg -i fitsync_*.deb` or open it in your package manager. |
+
+Each installer bundles its own Java runtime, so there's nothing else to set up.
+These builds aren't code-signed, so your OS will show a first-run warning:
+- **Windows (SmartScreen):** click "More info" → "Run anyway".
+- **macOS (Gatekeeper):** right-click the app → "Open" → confirm "Open" (only needed the first time).
+
+A new release is published automatically whenever a `vX.Y.Z` tag is pushed —
+see `.github/workflows/release.yml`.
+
+---
+
 ## Screenshots
 
 > _Placeholder — add PNGs under `docs/screenshots/` and link them here._
@@ -157,9 +178,42 @@ sudo apt install -y libgtk-3-0 libxtst6
 
 ```bash
 mvn clean package
-# then run with the JavaFX plugin
-mvn javafx:run
 ```
+
+This produces `target/fitsync-<version>.jar` plus its dependencies under
+`target/libs/`. Keep them together and it runs standalone with plain Java —
+no Maven or `javafx:run` needed:
+
+```bash
+java -jar target/fitsync-<version>.jar
+```
+
+### Build a native installer yourself
+
+The same [installers published on Releases](#download) can be built locally
+with `jpackage` (bundled with JDK 17+) — this makes an OS-specific installer
+that bundles its own Java runtime:
+
+```bash
+mvn clean package -DskipTests
+
+# Windows (needs the WiX Toolset: https://wixtoolset.org)
+jpackage --type msi --input target --main-jar target/fitsync-<version>.jar ^
+  --main-class com.fitsync.MainLauncher --name FitSync --app-version <version> ^
+  --win-menu --win-shortcut --icon target/classes/icons/fitsync.ico --dest dist
+
+# macOS
+jpackage --type dmg --input target --main-jar target/fitsync-<version>.jar \
+  --main-class com.fitsync.MainLauncher --name FitSync --app-version <version> \
+  --icon target/classes/icons/fitsync.icns --dest dist
+
+# Linux (Debian/Ubuntu)
+jpackage --type deb --input target --main-jar target/fitsync-<version>.jar \
+  --main-class com.fitsync.MainLauncher --name FitSync --app-version <version> \
+  --icon target/classes/icons/fitsync.png --dest dist
+```
+
+The finished installer(s) land in `dist/`.
 
 ---
 

@@ -2,6 +2,9 @@
 target/
 targe/
 
+# jpackage installer output
+dist/
+
 # IntelliJ IDEA project files
 .idea/
 *.iml
